@@ -17,7 +17,6 @@ public class CameraActivity extends AppCompatActivity implements ZXingScannerVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_camera);
         QRScanner();
     }
     public void QRScanner(){
@@ -29,14 +28,6 @@ public class CameraActivity extends AppCompatActivity implements ZXingScannerVie
 
     @Override
     public void handleResult(Result rawResult) {
-        // show the scanner result into dialog box.
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("Scan Result");
-//        builder.setMessage(rawResult.getText());
-//        AlertDialog alert1 = builder.create();
-//        alert1.show();
-        // If you would like to resume scanning, call this method below:
-//         mScannerView.resumeCameraPreview(this);
         Intent intent = new Intent();
         intent.putExtra(INTENTDATA_CODE, rawResult.getText());
         setResult(RESULT_OK, intent);

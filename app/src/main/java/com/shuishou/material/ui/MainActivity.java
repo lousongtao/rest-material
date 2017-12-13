@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -45,7 +46,11 @@ import com.yanzhenjie.nohttp.NoHttp;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -179,8 +184,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (TAG_UPLOADERRORLOG.equals(v.getTag())){
             IOOperator.onUploadErrorLog(this);
         } else if (TAG_LOOKFOR.equals(v.getTag())){
-//            QuickSearchDialog dlg = new QuickSearchDialog(MainActivity.this);
-//            dlg.showDialog();
             Intent intent = new Intent(MainActivity.this, QuickSearchActivity.class);
             intent.putExtra(INTENTEXTRA_CATEGORYLIST, categories);
             startActivityForResult(intent, REQUESTCODE_QUICKSEARCH);
@@ -275,7 +278,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
-
 
 }
 
