@@ -64,13 +64,6 @@
         android:background="#FFFFFF"
         android:layout_gravity="start">
 
-        <TextView
-            android:id="@+id/drawermenu_serverurl"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="20dp"
-            android:text="@string/drawmenu_serverurl"
-            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/drawermenu_uploaderrorlog"

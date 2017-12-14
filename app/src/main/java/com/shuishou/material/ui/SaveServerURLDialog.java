@@ -19,23 +19,23 @@ import com.shuishou.material.io.IOOperator;
 class SaveServerURLDialog {
 
     private EditText txtServerURL;
-    private MainActivity mainActivity;
+    private LoginActivity loginActivity;
 
     private AlertDialog dlg;
 
-    public SaveServerURLDialog(@NonNull MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public SaveServerURLDialog(@NonNull LoginActivity loginActivity) {
+        this.loginActivity = loginActivity;
         initUI();
     }
 
     private void initUI(){
-        View view = LayoutInflater.from(mainActivity).inflate(R.layout.config_serverurl_layout, null);
+        View view = LayoutInflater.from(loginActivity).inflate(R.layout.config_serverurl_layout, null);
 
         txtServerURL = (EditText) view.findViewById(R.id.txtServerURL);
 
         loadServerURL();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(loginActivity);
         builder.setTitle("Configure Server URL")
                 .setIcon(R.drawable.info)
                 .setPositiveButton("Save", null)
@@ -67,7 +67,7 @@ class SaveServerURLDialog {
     private void doSaveURL(){
         final String url = txtServerURL.getText().toString();
         if (url == null || url.length() == 0){
-            Toast.makeText(mainActivity, "Please input server URL.", Toast.LENGTH_LONG).show();
+            Toast.makeText(loginActivity, "Please input server URL.", Toast.LENGTH_LONG).show();
             return;
         }
         IOOperator.saveServerURL(InstantValue.FILE_SERVERURL, url);

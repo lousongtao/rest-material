@@ -37,6 +37,7 @@ import com.shuishou.material.InstantValue;
 import com.shuishou.material.R;
 import com.shuishou.material.bean.Material;
 import com.shuishou.material.bean.MaterialCategory;
+import com.shuishou.material.bean.UserData;
 import com.shuishou.material.http.HttpOperator;
 import com.shuishou.material.io.IOOperator;
 import com.shuishou.material.utils.CommonTool;
@@ -65,13 +66,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String TAG_UPLOADERRORLOG = "uploaderrorlog";
     private String TAG_EXITSYSTEM = "exitsystem";
     private String TAG_LOOKFOR = "lookfor";
-    private String TAG_SERVERURL = "serverurl";
     private String TAG_SCAN = "scan";
     private final static int REQUESTCODE_SCAN = 1;
     private final static int REQUESTCODE_QUICKSEARCH = 2;
     public final static String INTENTEXTRA_CATEGORYLIST= "CATEGORYLIST";
 
-    private int loginUserId;
+    private UserData loginUser;
     private ArrayList<MaterialCategory> categories = new ArrayList<>();
     private ArrayList<Material> materials = new ArrayList<>();
     private HttpOperator httpOperator;
@@ -86,12 +86,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loginUser = (UserData)getIntent().getExtras().getSerializable(LoginActivity.INTENTEXTRA_LOGINUSER);
         setContentView(R.layout.activity_main);
         lvCategory = (android.support.v7.widget.RecyclerView)findViewById(R.id.category_listview);
         lvMaterial = (android.support.v7.widget.RecyclerView)findViewById(R.id.material_listview);
         btnLookfor = (ImageButton)findViewById(R.id.btnLookfor);
         btnScan = (ImageButton)findViewById(R.id.btnScan);
-        TextView tvServerURL = (TextView)findViewById(R.id.drawermenu_serverurl);
         TextView tvUploadErrorLog = (TextView)findViewById(R.id.drawermenu_uploaderrorlog);
         TextView tvExit = (TextView)findViewById(R.id.drawermenu_exit);
 
@@ -99,19 +99,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvExit.setTag(TAG_EXITSYSTEM);
         btnLookfor.setTag(TAG_LOOKFOR);
         btnScan.setTag(TAG_SCAN);
-        tvServerURL.setTag(TAG_SERVERURL);
         tvUploadErrorLog.setOnClickListener(this);
         tvExit.setOnClickListener(this);
         btnLookfor.setOnClickListener(this);
-        tvServerURL.setOnClickListener(this);
         btnScan.setOnClickListener(this);
 
-        //init tool class, NoHttp
-        NoHttp.initialize(this);
+
         Logger.setDebug(true);
         Logger.setTag("material:nohttp");
 
-        InstantValue.URL_TOMCAT = IOOperator.loadServerURL(InstantValue.FILE_SERVERURL);
+
         httpOperator = new HttpOperator(this);
 
         httpOperator.loadData();
@@ -146,8 +143,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return toastHandler;
     }
 
-    public int getLoginUserId() {
-        return loginUserId;
+    public UserData getLoginUser() {
+        return loginUser;
     }
 
     public ArrayList<MaterialCategory> getCategories() {
@@ -187,9 +184,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(MainActivity.this, QuickSearchActivity.class);
             intent.putExtra(INTENTEXTRA_CATEGORYLIST, categories);
             startActivityForResult(intent, REQUESTCODE_QUICKSEARCH);
-        } else if (TAG_SERVERURL.equals(v.getTag())){
-            SaveServerURLDialog dlg = new SaveServerURLDialog(MainActivity.this);
-            dlg.showDialog();
         } else if (TAG_EXITSYSTEM.equals(v.getTag())){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Confirm")

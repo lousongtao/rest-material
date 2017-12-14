@@ -9,6 +9,8 @@ import com.shuishou.material.R;
 import com.shuishou.material.bean.HttpResult;
 import com.shuishou.material.bean.Material;
 import com.shuishou.material.bean.MaterialCategory;
+import com.shuishou.material.bean.UserData;
+import com.shuishou.material.ui.LoginActivity;
 import com.shuishou.material.ui.MainActivity;
 import com.shuishou.material.utils.CommonTool;
 import com.yanzhenjie.nohttp.FileBinary;
@@ -19,6 +21,7 @@ import com.yanzhenjie.nohttp.rest.Request;
 import com.yanzhenjie.nohttp.rest.RequestQueue;
 import com.yanzhenjie.nohttp.rest.Response;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -34,7 +37,10 @@ public class HttpOperator {
 
 
     private MainActivity mainActivity;
+    private LoginActivity loginActivity;
+
     private static final int WHAT_VALUE_QUERYMATERIAL = 1;
+    private static final int WHAT_VALUE_LOGIN = 2;
 
     private Gson gson = new Gson();
 
@@ -49,6 +55,9 @@ public class HttpOperator {
                 case WHAT_VALUE_QUERYMATERIAL :
                     doResponseQueryMaterial(response);
                     break;
+                case WHAT_VALUE_LOGIN :
+                    doResponseLogin(response);
+                    break;
                 default:
             }
         }
@@ -62,6 +71,10 @@ public class HttpOperator {
                 case WHAT_VALUE_QUERYMATERIAL :
                     msg = "Failed to load Material data. Please restart app!";
                     break;
+                case WHAT_VALUE_LOGIN :
+                    msg = "Failed to login. Please retry!";
+                    break;
+                default:
             }
             CommonTool.popupWarnDialog(mainActivity, R.drawable.error, "WRONG", msg);
         }
@@ -77,6 +90,10 @@ public class HttpOperator {
         this.mainActivity = mainActivity;
     }
 
+    public HttpOperator(LoginActivity loginActivity) {
+        this.loginActivity = loginActivity;
+    }
+
     private void doResponseQueryMaterial(Response<JSONObject> response){
         if (response.getException() != null){
             Log.e(logTag, "doResponseQueryMaterial: " + response.getException().getMessage() );
@@ -87,13 +104,44 @@ public class HttpOperator {
         HttpResult<ArrayList<MaterialCategory>> result = gson.fromJson(response.get().toString(), new TypeToken<HttpResult<ArrayList<MaterialCategory>>>(){}.getType());
         if (result.success){
             ArrayList<MaterialCategory> mcs = result.data;
-//            mainActivity.setCategories(mcs);
-//            mainActivity.persistData();
             mainActivity.initData(mcs);
         }else {
             Log.e(logTag, "doResponseQueryMaterial: get FALSE for query material");
             MainActivity.LOG.error("doResponseQueryMaterial: get FALSE for query material");
         }
+    }
+
+    private void doResponseLogin(Response<JSONObject> response){
+        if (response.getException() != null){
+            Log.e(logTag, "doResponseLogin: " + response.getException().getMessage() );
+            MainActivity.LOG.error("doResponseLogin: " + response.getException().getMessage());
+            sendErrorMessageToToast("doResponseLogin: " + response.getException().getMessage());
+            return;
+        }
+        JSONObject loginResult = response.get();
+        try {
+            if ("ok".equals(loginResult.getString("result"))){
+                UserData loginUser = new UserData();
+                loginUser.setId(loginResult.getInt("userId"));
+                loginUser.setName(loginResult.getString("userName"));
+                loginActivity.loginSuccess(loginUser);
+            } else {
+                Log.e(logTag, "doResponseLogin: get FAIL while login" + loginResult.getString("result"));
+                MainActivity.LOG.error("doResponseLogin: get FAIL while login"  + loginResult.getString("result"));
+                sendErrorMessageToToast("doResponseLogin: get FAIL while login"  + loginResult.getString("result"));
+            }
+        } catch (JSONException e) {
+            Log.e(logTag, "doResponseLogin: parse json: " + e.getMessage() );
+            MainActivity.LOG.error("doResponseLogin: parse json:" + e.getMessage());
+            sendErrorMessageToToast("doResponseLogin: parse json:" + e.getMessage());
+        }
+    }
+
+    public void login(String name, String password){
+        Request<JSONObject> request = NoHttp.createJsonObjectRequest(InstantValue.URL_TOMCAT + "/login");
+        request.add("username", name);
+        request.add("password", password);
+        requestQueue.add(WHAT_VALUE_LOGIN, request, responseListener);
     }
 
     //load material
@@ -125,7 +173,7 @@ public class HttpOperator {
 
     public HttpResult<Material> saveAmount(int materialId, double amount){
         Request<JSONObject> request = NoHttp.createJsonObjectRequest(InstantValue.URL_TOMCAT + "/material/updatematerialamount", RequestMethod.POST);
-        request.add("userId", "1");//TODO; wait the login dialog
+        request.add("userId", mainActivity.getLoginUser().getId());
         request.add("id", String.valueOf(materialId));
         request.add("leftAmount", String.valueOf(amount));
         Response<JSONObject> response = NoHttp.startRequestSync(request);
