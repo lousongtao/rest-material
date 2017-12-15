@@ -211,7 +211,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Material m = null;
                     for(MaterialCategory mc : categories){
                         for(Material material : mc.getMaterials()){
-                            if (material.getName().equals(code)){
+                            if (material.getName().equals(code)
+                                    || code.equals(material.getBarCode())){
                                 m = material;
                                 break;
                             }

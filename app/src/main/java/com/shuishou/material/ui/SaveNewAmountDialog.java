@@ -107,6 +107,7 @@ class SaveNewAmountDialog {
     public void showDialog(Material m){
         this.material = m;
         txtNewAmount.setText(InstantValue.NULLSTRING);
+        dlg.setTitle("Change Amount for " + m.getName());
         dlg.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dlg.show();
     }

@@ -2,12 +2,6 @@ package com.shuishou.material.bean;
 
 import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
-//import com.litesuits.orm.db.annotation.Column;
-//import com.litesuits.orm.db.annotation.Mapping;
-//import com.litesuits.orm.db.annotation.PrimaryKey;
-//import com.litesuits.orm.db.annotation.Table;
-//import com.litesuits.orm.db.enums.AssignType;
-//import com.litesuits.orm.db.enums.Relation;
 /**
  * Created by Administrator on 2017-12-06.
  */
@@ -15,30 +9,23 @@ import com.google.gson.annotations.SerializedName;
 //@Table("material")
 public class Material implements Serializable {
     @SerializedName(value = "id")
-//    @PrimaryKey(value = AssignType.BY_MYSELF)
     private int id;
 
-//    @Column("name")
     private String name;
 
-//    @Column("sequence")
     private int sequence;
 
-//    @Column("left_amount")
     private double leftAmount;
 
-//    @Column("unit")
     private String unit;
 
-//    @Column("alarm_amount")
     private double alarmAmount;
 
-//    @Column("alarm_status")
     private int alarmStatus;
 
-//    @Mapping(Relation.ManyToOne)
-//    @Column("category_id")
     private MaterialCategory materialCategory;
+
+    private String barCode;
 
     public int getId() {
         return id;
@@ -103,6 +90,14 @@ public class Material implements Serializable {
 
     public void setMaterialCategory(MaterialCategory materialCategory) {
         this.materialCategory = materialCategory;
+    }
+
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
     }
 
     @Override
