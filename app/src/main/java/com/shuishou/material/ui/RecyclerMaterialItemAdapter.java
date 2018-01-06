@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,13 +30,13 @@ public class RecyclerMaterialItemAdapter extends RecyclerView.Adapter<RecyclerMa
         final TextView txtName;
         final TextView txtLeftAmount;
         final TextView txtUnit;
-        final Button btnChange;
+        final ImageButton btnChange;
         public ViewHolder(View view){
             super(view);
             txtName = (TextView) view.findViewById(R.id.txt_materialname);
             txtLeftAmount = (TextView) view.findViewById(R.id.txt_leftamount);
             txtUnit = (TextView) view.findViewById(R.id.txt_unit);
-            btnChange = (Button) view.findViewById(R.id.btn_change);
+            btnChange = (ImageButton) view.findViewById(R.id.btn_change);
         }
     }
 

@@ -66,17 +66,16 @@ public class HttpOperator {
         public void onFailed(int what, Response<JSONObject> response) {
             Log.e("Http failed", "what = "+ what + "\nresponse = "+ response.get());
             MainActivity.LOG.error("Response Listener On Faid. what = "+ what + "\nresponse = "+ response.get());
-            String msg = InstantValue.NULLSTRING;
             switch (what){
                 case WHAT_VALUE_QUERYMATERIAL :
-                    msg = "Failed to load Material data. Please restart app!";
+                    CommonTool.popupWarnDialog(mainActivity, R.drawable.error, "WRONG", "Failed to load Material data. Please restart app!");
                     break;
                 case WHAT_VALUE_LOGIN :
-                    msg = "Failed to login. Please retry!";
+                    CommonTool.popupWarnDialog(loginActivity, R.drawable.error, "WRONG", "Failed to login. Please retry!");
                     break;
                 default:
             }
-            CommonTool.popupWarnDialog(mainActivity, R.drawable.error, "WRONG", msg);
+
         }
 
         @Override
