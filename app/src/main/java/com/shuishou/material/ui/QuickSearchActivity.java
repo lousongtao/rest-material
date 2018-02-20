@@ -46,7 +46,7 @@ public class QuickSearchActivity extends AppCompatActivity {
         resultCellList.add(findViewById(R.id.quicksearchresultcell7));
         resultCellList.add(findViewById(R.id.quicksearchresultcell8));
         for(View v : resultCellList){
-            Button btn = (Button)v.findViewById(R.id.btn_change);
+            ImageButton btn = (ImageButton)v.findViewById(R.id.btn_change);
             btn.setOnClickListener(listener);
         }
 
