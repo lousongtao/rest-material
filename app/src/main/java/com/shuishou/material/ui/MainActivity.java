@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton btnLookfor;
     private ImageButton btnScan;
     private SaveNewAmountDialog saveNewAmountDialog;
+    private ImportAmountDialog importAmountDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         httpOperator.loadData();
 
         saveNewAmountDialog = new SaveNewAmountDialog(this);
+        importAmountDialog = new ImportAmountDialog(this);
     }
 
     public void initData(ArrayList<MaterialCategory> mcs){
@@ -163,15 +165,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return saveNewAmountDialog;
     }
 
+    public ImportAmountDialog getImportAmountDialog(){
+        return importAmountDialog;
+    }
+
     public RecyclerMaterialItemAdapter getMaterialAdapter() {
         return materialAdapter;
     }
 
     public void notifyMaterialItemChanged(Material m){
+        boolean isFound = false;//firstly loop the current material list, if find, notify to update UI; if not, loop all the catagories to update the data
         for(int i = 0; i< materials.size(); i++){
             if (materials.get(i).getId() == m.getId()){
+                materials.get(i).setLeftAmount(m.getLeftAmount());
                 materialAdapter.notifyItemChanged(i);
+                isFound = true;
                 break;
+            }
+        }
+        if (!isFound){
+            for(MaterialCategory mc : categories){
+                if (mc.getMaterials() != null){
+                    for(Material mtemp : mc.getMaterials()){
+                        if (mtemp.getId() == m.getId()){
+                            mtemp.setLeftAmount(m.getLeftAmount());
+                            return;
+                        }
+                    }
+                }
             }
         }
     }
@@ -229,7 +250,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case REQUESTCODE_QUICKSEARCH:
                 if (resultCode == RESULT_OK){
                     Material m = (Material)data.getSerializableExtra(QuickSearchActivity.INTENTDATA_MATERIAL);
-                    saveNewAmountDialog.showDialog(m);
+                    int action = data.getIntExtra(QuickSearchActivity.INTENTDATA_ACTION, 0);
+                    if (action == QuickSearchActivity.INTENTDATA_ACTION_CHANGE)
+                        saveNewAmountDialog.showDialog(m);
+                    else if (action == QuickSearchActivity.INTENTDATA_ACTION_IMPORT)
+                        importAmountDialog.showDialog(m);
+                    else
+                        Toast.makeText(this, "Unrecognized Action!", Toast.LENGTH_LONG).show();
                 } else if (resultCode == RESULT_CANCELED){}
                 break;
             default:

@@ -16,17 +16,16 @@ import com.shuishou.material.InstantValue;
 import com.shuishou.material.R;
 import com.shuishou.material.bean.HttpResult;
 import com.shuishou.material.bean.Material;
-import com.shuishou.material.bean.MaterialCategory;
-import com.shuishou.material.io.IOOperator;
 import com.shuishou.material.utils.CommonTool;
+
 
 /**
  * Created by Administrator on 2017/7/21.
  */
 
-class SaveNewAmountDialog {
+class ImportAmountDialog {
     private TextView txtLeftAmount;
-    private EditText txtNewAmount;
+    private EditText txtImportAmount;
     private MainActivity mainActivity;
 
     private AlertDialog dlg;
@@ -49,20 +48,20 @@ class SaveNewAmountDialog {
         }
     }
 
-    public SaveNewAmountDialog(@NonNull MainActivity mainActivity) {
+    public ImportAmountDialog(@NonNull MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         initUI();
     }
 
     private void initUI(){
-        View view = LayoutInflater.from(mainActivity).inflate(R.layout.change_newamount_layout, null);
+        View view = LayoutInflater.from(mainActivity).inflate(R.layout.import_amount_layout, null);
         txtLeftAmount = (TextView) view.findViewById(R.id.txtLeftAmount);
-        txtNewAmount = (EditText) view.findViewById(R.id.txtNewAmount);
+        txtImportAmount = (EditText) view.findViewById(R.id.txtImportAmount);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-        builder.setTitle("Change Amount")
-                .setIcon(R.drawable.update)
-                .setPositiveButton("Save", null)
+        builder.setTitle("Import Amount")
+                .setIcon(R.drawable.import1)
+                .setPositiveButton("Import", null)
                 .setNegativeButton("Cancel", null)
                 .setView(view);
         dlg = builder.create();
@@ -84,7 +83,7 @@ class SaveNewAmountDialog {
 
 
     private void doSave(){
-        final String amount = txtNewAmount.getText().toString();
+        final String amount = txtImportAmount.getText().toString();
         if (amount == null || amount.length() == 0){
             Toast.makeText(mainActivity, "Please input amount.", Toast.LENGTH_LONG).show();
             return;
@@ -92,12 +91,12 @@ class SaveNewAmountDialog {
         new Thread(){
             @Override
             public void run() {
-                HttpResult<Material> result = mainActivity.getHttpOperator().saveAmount(material.getId(), Integer.parseInt(amount));
+                HttpResult<Material> result = mainActivity.getHttpOperator().importAmount(material.getId(), Integer.parseInt(amount));
                 if (result.data instanceof Material){
-                    material.setLeftAmount(Double.parseDouble(amount));
+                    material.setLeftAmount(result.data.getLeftAmount());
                     handler.sendMessage(CommonTool.buildMessage(MESSAGEWHAT_NOTIFYLISTCHANGE));
                 } else {
-                    MainActivity.LOG.error("get false from server while save material amount. material = " + material.getName()
+                    MainActivity.LOG.error("get false from server while import goods. goods = " + material.getName()
                             + ", amount = " + amount + ", error message = " + result.data);
                 }
             }
@@ -105,11 +104,11 @@ class SaveNewAmountDialog {
         dlg.dismiss();
     }
 
-    public void showDialog(Material m){
-        this.material = m;
+    public void showDialog(Material material){
+        this.material = material;
         txtLeftAmount.setText("Left Amount : " + material.getLeftAmount());
-        txtNewAmount.setText(InstantValue.NULLSTRING);
-        dlg.setTitle("Change Amount for " + m.getName());
+        txtImportAmount.setText(InstantValue.NULLSTRING);
+        dlg.setTitle("Import Amount for " + material.getName());
         dlg.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dlg.show();
     }

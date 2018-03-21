@@ -22,7 +22,8 @@ import java.util.ArrayList;
  */
 
 public class RecyclerMaterialItemAdapter extends RecyclerView.Adapter<RecyclerMaterialItemAdapter.ViewHolder> {
-    private ChangeAmountClickListener clickListener = new ChangeAmountClickListener();
+    private ChangeAmountClickListener changeAmountListener = new ChangeAmountClickListener();
+    private ImportClickListener importClickListener = new ImportClickListener();
     private final int resourceId;
     private final ArrayList<Material> ms;
     private final MainActivity mainActivity;
@@ -31,12 +32,14 @@ public class RecyclerMaterialItemAdapter extends RecyclerView.Adapter<RecyclerMa
         final TextView txtLeftAmount;
         final TextView txtUnit;
         final ImageButton btnChange;
+        final ImageButton btnImport;
         public ViewHolder(View view){
             super(view);
             txtName = (TextView) view.findViewById(R.id.txt_materialname);
             txtLeftAmount = (TextView) view.findViewById(R.id.txt_leftamount);
             txtUnit = (TextView) view.findViewById(R.id.txt_unit);
             btnChange = (ImageButton) view.findViewById(R.id.btn_change);
+            btnImport = (ImageButton) view.findViewById(R.id.btn_import);
         }
     }
 
@@ -61,7 +64,9 @@ public class RecyclerMaterialItemAdapter extends RecyclerView.Adapter<RecyclerMa
         holder.txtLeftAmount.setText(String.valueOf(m.getLeftAmount()));
         holder.txtName.setText(m.getName());
         holder.btnChange.setTag(m);
-        holder.btnChange.setOnClickListener(clickListener);
+        holder.btnChange.setOnClickListener(changeAmountListener);
+        holder.btnImport.setTag(m);
+        holder.btnImport.setOnClickListener(importClickListener);
     }
 
     @Override
@@ -74,6 +79,14 @@ public class RecyclerMaterialItemAdapter extends RecyclerView.Adapter<RecyclerMa
         @Override
         public void onClick(View v) {
             mainActivity.getSaveNewAmountDialog().showDialog((Material)v.getTag());
+        }
+    }
+
+    class ImportClickListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            mainActivity.getImportAmountDialog().showDialog((Material)v.getTag());
         }
     }
 }

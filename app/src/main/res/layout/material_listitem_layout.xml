@@ -45,6 +45,15 @@
             android:background="@drawable/update"
             android:text="Change" />
 
+        <ImageButton
+            android:id="@+id/btn_import"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/import1"
+            android:text="Change" />
+
     </LinearLayout>
 
 </LinearLayout>

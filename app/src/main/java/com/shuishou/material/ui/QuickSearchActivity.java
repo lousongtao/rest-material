@@ -22,11 +22,15 @@ import java.util.ArrayList;
 
 public class QuickSearchActivity extends AppCompatActivity {
     public static final String INTENTDATA_MATERIAL = "MATERIAL";
+    public static final String INTENTDATA_ACTION = "ACTION";
+    public static final int INTENTDATA_ACTION_CHANGE = 1;
+    public static final int INTENTDATA_ACTION_IMPORT = 2;
     private EditText txtSearchCode;
     private ArrayList<View> resultCellList = new ArrayList<>(8);
     private AlertDialog dlg;
 
-    private QuickSearchActivity.ChooseMaterialListener listener = new QuickSearchActivity.ChooseMaterialListener();
+    private ChangeAmountListener changeAmountListener = new ChangeAmountListener();
+    private ImportlListener importlListener = new ImportlListener();
     private ArrayList<Material> allMaterials;
     private ArrayList<MaterialCategory> categories;
     @Override
@@ -46,8 +50,10 @@ public class QuickSearchActivity extends AppCompatActivity {
         resultCellList.add(findViewById(R.id.quicksearchresultcell7));
         resultCellList.add(findViewById(R.id.quicksearchresultcell8));
         for(View v : resultCellList){
-            ImageButton btn = (ImageButton)v.findViewById(R.id.btn_change);
-            btn.setOnClickListener(listener);
+            ImageButton btnChange = (ImageButton) v.findViewById(R.id.btn_change);
+            btnChange.setOnClickListener(changeAmountListener);
+            ImageButton btnImport = (ImageButton) v.findViewById(R.id.btn_import);
+            btnImport.setOnClickListener(importlListener);
         }
 
         txtSearchCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -57,22 +63,6 @@ public class QuickSearchActivity extends AppCompatActivity {
                 return true;
             }
         });
-//        txtSearchCode.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                refreshResult();
-//            }
-//        });
         initData();
     }
 
@@ -104,9 +94,10 @@ public class QuickSearchActivity extends AppCompatActivity {
             Material m = results.get(i);
             View v = resultCellList.get(i);
             v.setVisibility(View.VISIBLE);
-            Button btn = (Button)v.findViewById(R.id.btn_change);
-            btn.setTag(m);
-            btn.setOnClickListener(listener);
+            ImageButton btnChange = (ImageButton)v.findViewById(R.id.btn_change);
+            btnChange.setTag(m);
+            ImageButton btnImport = (ImageButton) v.findViewById(R.id.btn_import);
+            btnImport.setTag(m);
             TextView txtName = (TextView)v.findViewById(R.id.txt_materialname);
             TextView txtLeftAmouont = (TextView)v.findViewById(R.id.txt_leftamount);
             TextView txtUnit = (TextView)v.findViewById(R.id.txt_unit);
@@ -133,13 +124,28 @@ public class QuickSearchActivity extends AppCompatActivity {
         finish();
     }
 
-    class ChooseMaterialListener implements View.OnClickListener {
+    class ChangeAmountListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v.getTag() != null && v.getTag().getClass().getName().equals(Material.class.getName())){
                 Material m = (Material)v.getTag();
                 Intent intent = new Intent();
                 intent.putExtra(INTENTDATA_MATERIAL, m);
+                intent.putExtra(INTENTDATA_ACTION, INTENTDATA_ACTION_CHANGE);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
+    }
+
+    class ImportlListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            if (v.getTag() != null && v.getTag().getClass().getName().equals(Material.class.getName())){
+                Material m = (Material)v.getTag();
+                Intent intent = new Intent();
+                intent.putExtra(INTENTDATA_MATERIAL, m);
+                intent.putExtra(INTENTDATA_ACTION, INTENTDATA_ACTION_IMPORT);
                 setResult(RESULT_OK, intent);
                 finish();
             }

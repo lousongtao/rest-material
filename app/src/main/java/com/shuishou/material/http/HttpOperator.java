@@ -192,4 +192,27 @@ public class HttpOperator {
         HttpResult<Material> result = gson.fromJson(response.get().toString(), new TypeToken<HttpResult<Material>>(){}.getType());
         return result;
     }
+
+    public HttpResult<Material> importAmount(int goodsId, int amount){
+        Request<JSONObject> request = NoHttp.createJsonObjectRequest(InstantValue.URL_TOMCAT + "/material/purchasematerial", RequestMethod.POST);
+        request.add("userId", mainActivity.getLoginUser().getId());
+        request.add("id", String.valueOf(goodsId));
+        request.add("amount", String.valueOf(amount));
+        Response<JSONObject> response = NoHttp.startRequestSync(request);
+
+        if (response.getException() != null){
+            HttpResult<Material> result = new HttpResult<>();
+            result.result = response.getException().getMessage();
+            return result;
+        }
+        if (response.get() == null) {
+            Log.e(logTag, "Error occur while import material amount. response.get() is null.");
+            MainActivity.LOG.error("Error occur while import material amount. response.get() is null.");
+            HttpResult<Material> result = new HttpResult<>();
+            result.result = "Error occur while import materialamount. response.get() is null";
+            return result;
+        }
+        HttpResult<Material> result = gson.fromJson(response.get().toString(), new TypeToken<HttpResult<Material>>(){}.getType());
+        return result;
+    }
 }
